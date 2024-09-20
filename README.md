@@ -1,0 +1,99 @@
+Project Name: Library Management System
+
+--- Description: ---
+This command-line-based application is designed to streamline the management of books and resources within a library. Your mission is to create a robust system that allows users to browse, borrow, return, and explore a collection of books while demonstrating your proficiency in OOP principles and the use of modules.
+
+--- Features: ---
+Enhanced User Interface (UI) and Menu for:
+- Book Operations (add, borrow, return, search, and display)
+- User Operations (add, view user details and display all users)
+- Author Operations (add, view author details, and display all authors)
+
+Class Structure:
+- Book: A class representing individual books with attributes such as title, author,  genre, publication date, and availability status.
+- User: A class to represent library users with attributes like name, library ID, and a list of borrowed book titles.
+- Author: A class representing book authors with attributes like name and biography.
+
+Encapsulation - defining private attributes and using getters and setters for necessary data access.
+
+Modules - promoting code organization and maintainability. Create separate modules for classes, user interactions, and error handling.
+
+Menu Actions:
+• Adding a new book with all relevant details.
+• Allowing users to borrow a book, marking it as "Borrowed."
+• Allowing users to return a book, marking it as "Available."
+• Searching for a book by its unique identifier (title) and displaying its details.
+• Displaying a list of all books with their unique identifiers.
+• Adding a new user with user details.
+• Viewing user details.
+• Displaying a list of all users.
+• Adding a new author with author details.
+• Viewing author details.
+• Displaying a list of all authors.
+• Quitting the application.
+
+Error Handling - Using try, except, else, and finally blocks to manage potential issues gracefully, such as incorrect user input or file operations.
+
+--- Installation: ---
+Prerequisites
+Ensure you have the following installed on your machine:
+- Python 3.8+
+- pip (Python package installer)
+- Virtual environment tool (recommended)
+
+Steps
+1. Clone the repository
+Open your terminal and run:
+git clone <link>
+
+2. Create a virtual environment
+It's recommended to create a virtual environment to manage dependencies:
+python -m venv venv
+source venv/bin/activate (For Windows use 'venv\Scripts\activate)
+
+3. Install dependencies
+Once the virtual environment is activated, install the required packages:
+pip install -r requirements.txt
+
+4. Set up environment variables (if any)
+If the project uses environment variables, create a .env file in the project root and define them there. 
+An example is provided:
+cp .env.examples .env
+
+Usage
+Once installed, you can run the Library Management Project by executing the following command:
+python main.py --input-file data/input.csv --output-file date/output.csv -- operation clean
+
+Example
+To clean the dataset and generate a cleaned output CSV:
+python main.py --input-file data/raw_data.csv --ouput-file data/cleaned_data.csv --operation clean
+
+For more options and help:
+python main.py --help
+
+--- Project Structure ---
+
+
+
+
+
+--- Running Tests ---
+We use pytest for testing. To run the tests, use the following command:
+pytest tests/
+To check code for coverage, run:
+pytest --cov=src tests/
+
+--- Contributing ---
+1. Fork the repository.
+2. Create a branch: git checkout -b feature/your-feature-name.
+3. Make your changes and commit: git commit -m 'Add some feature'
+4. Push to the branch: git push origin feature/your-feature-name
+5. Submit a pull request.
+
+--- Guidelines ---
+- Follow PEP 8 for Python code style
+- Write tests for any new functionality
+- Ensure all tests pass before submitting a pull request
+
+--- Contact ---
+For any questions, please reach out via 'genesis09m@hotmail.com'
