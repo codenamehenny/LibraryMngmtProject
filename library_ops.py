@@ -1,3 +1,5 @@
+# this file has all functions for book, user and author operation menues
+
 from library_classes import Book, User, Author
 
 books = []
@@ -23,21 +25,29 @@ def borrow_book():
             if user:
                 user.borrow_book(book)
                 return
-    print(f"'{title}' was not found in the library, please try a different book.")
+        else:
+            print(f"'{title}' was not found in the library, please try a different book.")
 
 def return_book():
     title = input("Enter book title to return: ").title()
     for book in books:
         if book.title == title:
             library_id = input("Enter user's library ID: ")
-            pass
+            user = find_user(library_id)
+            if user:
+                user.return_book(book)
+            return
+        else:
+            print(f'{title} was not found in the system. Please add it')
 
 def search_book():
     title = input("Enter book title to search: ").title()
+    print("~ Search Result ~")
     for book in books:
         if book.title == title:
             print(book)
-    print(f"'{title}' was not found in the library, try a different book.")
+        else:
+            print(f"'{title}' was not found in the library, try a different book.")
 
 def display_books():
     if books:
@@ -88,6 +98,7 @@ def add_author():
 
 def view_author():
     name = input("Enter author name to view: ").title()
+    print("~ Search Result ~")
     for author in authors:
         if author.name == name:
             print(author)

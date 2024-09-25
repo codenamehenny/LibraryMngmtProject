@@ -10,7 +10,7 @@ class Book:
 
     def __str__(self):
         status = "Available" if self.available == True else "Borrowed"
-        return f"Title: {self.title} - Author: {self.author} - Genre: {self.genre}\nPublication Date: {publication_date} - Status: {status}"
+        return f"\nTitle: {self.title} - Author: {self.author} - Genre: {self.genre}\nPublication Date: {self.publication_date} - Status: {status}"
 
 class User:
 # structures user info neatly, has borrow and return functionalities for the user
@@ -20,7 +20,7 @@ class User:
         self.borrowed_books = []
 
     def __str__(self):
-        return f"User Name: {self.name} - Library ID: {self.library_id}\n{self.name}'s Borrowed Books: {','.join(self.borrowed_books) or 'N/A'}"
+        return f"\nUser Name: {self.name} - Library ID: {self.library_id}\n{self.name}'s Borrowed Books: {','.join(self.borrowed_books) or 'N/A'}"
     
     def borrow_book(self, book):
         if book.available:
@@ -45,5 +45,5 @@ class Author:
         self.bio = bio
     
     def __str__(self):
-        return f"Author: {self.name} - Biography: {self.bio}"
+        return f"\nAuthor: {self.name} - Biography: {self.bio}"
         

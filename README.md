@@ -72,10 +72,10 @@ For more options and help:
 python main.py --help
 
 --- Project Structure ---
-
-
-
-
+LibraryMngmtProject
+    - main.py (user interactions)
+    - library_classes.py (book, user and author classes)
+    - library_ops.py (all functions for book, user and author menues)
 
 --- Running Tests ---
 We use pytest for testing. To run the tests, use the following command:
