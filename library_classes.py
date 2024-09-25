@@ -14,7 +14,7 @@ class Book:
 
 class User:
 # structures user info neatly, has borrow and return functionalities for the user
-    def __init__(self, name, library_id)
+    def __init__(self, name, library_id):
         self.name = name
         self.library_id = library_id
         self.borrowed_books = []
