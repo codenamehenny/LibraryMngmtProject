@@ -5,7 +5,7 @@ import library_ops as ops
 def main_system():
     while True:
         try:
-            print("\nWelcome to the Library Management System!\nMain Menu:")
+            print("\nWelcome to the Library Management System with Database Integration!\nMain Menu:")
             print("1. Book Operations\n2. User Operations\n3. Author Operations \n4. Quit")
             option = int(input("Enter option number here: "))
             if option == 1:
