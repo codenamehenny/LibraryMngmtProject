@@ -3,7 +3,7 @@ import mysql.connector
 from mysql.connector import Error
 
 def connect_database():
-    # Database conenction parameters
+    # Database connection parameters
     db_name = "library_db"
     user = "root"
     password = " "
