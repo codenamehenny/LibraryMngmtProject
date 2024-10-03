@@ -1,31 +1,19 @@
 # this file has all functions for book, user and author operation menues
-# it has been updated to include database interaction, the classes were kept the same
-import mysql.connector
-from connect_db import connect_database
+
 from library_classes import Book, User, Author
 
 books = []
 users = []
 authors = []
-conn = connect_database()
-cursor = conn.cursor()
 
 # these functions are for the book operations menu (add, borrow, return, search, and display)
 def add_book():
     title = input("Enter book title: ").title()
     author = input("Enter author's name: ").title()
-    isbn = input("Enter ISBN: ")
     genre = input("Enter genre: ").title()
     publication_date = input("Enter publication date: ")
-    # removed former book class integration, now finding author in database and adding author if not in database
-    cursor.execute("SELECT id FROM authors WHERE name = %s", (author,))
-    result = cursor.fetchone()
-    if result:
-        author_id = result[0]
-    else:
-        add_author()
-    # adding book to database
-    cursor.execute("INSERT INTO books (title, author_id, publication_date) VALUES (%s, %s, %s, %s)")
+    book = Book(title, author, genre, publication_date)  # passes through book info to the Book class in library_classes.py
+    books.append(book) # adds book to the list of books
     print(f"'{title}' has been added to the library.")
 
 def borrow_book():
@@ -104,10 +92,8 @@ def display_users():
 def add_author():
     name = input("Enter author name: ").title()
     bio = input("Enter author biography (brief description): ")
-    # removed author class integration and added database integration for the authors table
-    cursor.execute("INSERT INTO authors (name, biography) VALUES (%s, %s)", (name, bio))
-    conn.commit()
-    author_id = cursor.lastrowid
+    author = Author(name, bio)
+    authors.append(author)
     print(f"'{name}' has been added to the authors list")
 
 def view_author():
