@@ -1,113 +1,150 @@
-# this file has all functions for book, user and author operation menues
+# this file runs operations for book, user and author menues
 
 from library_classes import Book, User, Author
-
-books = []
-users = []
-authors = []
+from connect_db import connect_database
 
 # these functions are for the book operations menu (add, borrow, return, search, and display)
 def add_book():
-    title = input("Enter book title: ").title()
-    author = input("Enter author's name: ").title()
-    genre = input("Enter genre: ").title()
-    publication_date = input("Enter publication date: ")
-    book = Book(title, author, genre, publication_date)  # passes through book info to the Book class in library_classes.py
-    books.append(book) # adds book to the list of books
-    print(f"'{title}' has been added to the library.")
+    try:
+        title = input("Enter book title: ").title()
+        author_name = input("Enter author's name: ").title()
+        isbn = input("Enter ISBN: ")
+        publication_date = input("Enter publication date: ")
+        # passing book details to Book class
+        book = Book(title, author, isbn, publication_date)  # passes through book info to the Book class in library_classes.py
+        books.save() # saves book details to database
+        except Exception as e:
+            print(f"Error message: {e}. Book details failed to save, please try again.")
 
 def borrow_book():
-    title = input("Enter book title to borrow: ").title()
-    for book in books:
-        if book.title == title:
-            library_id = input("Enter user's library ID: ")
-            user = find_user(library_id)
-            if user:
-                user.borrow_book(book)
-                return
+    try:
+        title = input("Enter book title to borrow: ").title()
+        library_id = input("Enter library ID: ")
+        # getting book and user
+        book = Book.search_book_title(title)
+        if book:
+            book.mark_as_borrowed(library_id)
+            print(f"{book.title} is now marked as borrowed.")
         else:
-            print(f"'{title}' was not found in the library, please try a different book.")
+            print(f"{title} not found in library. Please add it to the library before checking out")
+    except Exception as e:
+        print(f"Error message: {e}. The book failed to be checked out, please try again.")
 
 def return_book():
-    title = input("Enter book title to return: ").title()
-    for book in books:
-        if book.title == title:
-            library_id = input("Enter user's library ID: ")
-            user = find_user(library_id)
-            if user:
-                user.return_book(book)
+    try:
+        title = input("Enter book title to return: ").title()
+        library_id  = input("Enter library ID: ")
+        # getting book from database
+        book = Book.search_book_title(title)
+        if not book:
+            print(f"{title} was not registered in the database. Please register the book and check it in.")
             return
-        else:
-            print(f'{title} was not found in the system. Please add it')
+        if book.availability:
+            print(f"{book.title} is already marked available. No further action needed.")
+            return
+        book.return_book(library_id)
+        print(f"{book.title} was been successfully return and marked as available.")
+    except Exception as e:
+        print(f"Error Message: {e}. The book failed to be marked as returned, please try again")
 
 def search_book():
-    title = input("Enter book title to search: ").title()
-    print("~ Search Result ~")
-    for book in books:
-        if book.title == title:
-            print(book)
+    try:
+        title = input("Enter book title to search: ").title()
+        book = Book.search_book_title(title)
+        print("~ Search Result ~")
+        if book:
+            status = 'Available' if book.availability else 'Borrowed'
+            print(f"Title: {book.title}, Author: {book.author.name}, ISBN: {book.isbn}, 
+                Publication Date: {book.publication_date}, Availability: {status}")
         else:
-            print(f"'{title}' was not found in the library, try a different book.")
-
+            print(f"{title} was not found in the library.")
+    except Exception as e:
+        print(f"Error Message: {e}. The search could not be completed, please try again")
+        
 def display_books():
-    if books:
-        for book in books:
-            print(book)
-    else:
-        print("Library list empty. Please add books to the system")
+    try:
+        books = Book.get_all_books()
+        if books:
+            for book in books:
+                status = 'Available' if book.availability else 'Borrowed'
+                print(f"Title: {book.title}, Author: {book.author.name}, ISBN: {book.isbn}, 
+                    Publication Date: {book.publication_date}, Availability: {status}")
+        else:
+            print("No books are registered in the library")
+    except Exception as e:
+        print(f"Error Message: {e}. Request to display books failed, please try again")
 
 # these functions are for user operations menu (add, view and display users)
 def find_user(library_id):
-        for user in users:
-            if user.library_id == library_id:
-                return user
-        return None
+    try:
+        library_id = input("Enter the user's library ID: ")
+        user = User.search_by_library_id(library_id)
+        if user:
+            print(f"User found:\nName: {user.name} -- Library ID: {user.library_id}")
+        else:
+            print(f"Library ID {library_id} was not found")
+    except Exception as e:
+        print(f"Error Message: {e}. Failed to get user details, please try again")
 
 def add_user():
-    name = input("Enter user name: ").title()
-    library_id = input("Enter Library ID: ")
-    if library_id not in users:
-        user = User(name, library_id)
-        users.append(user)
-        print(f"'{name}' has been added and is ready to borrow books")
-    else:
-        print(f"Library ID {library_id} already taken, please assign a different ID.")
-
-def view_user():
-    library_id = input("Enter Library ID for user search: ")
-    user = find_user(library_id)
-    if user:
-        print(user)
-    else:
-        print(f"Library ID '{library_id}' not found, please try again.")
+    try:
+        name = input("Enter user name: ").title()
+        library_id = input("Enter Library ID: ")
+        # checking for existing library id's to ensure no duplicates
+        existing_user = User.search_by_library_id(library_id)
+        if existing_user:
+            print(f"Library ID {library_id} already registered. Please use a different ID")
+        else:
+            user = User(name = name, library_id = library_id)
+            user.save()
+            print(f"'{name}' has been added and is ready to borrow books")
+    except Exception as e:
+        print(f"Error Message: {e}. User failed to save, please try again")
 
 def display_users():
-    if users:
-        for user in users:
-            print(user)
-    else:
-        print("No users registered. Please add users")
+    try:
+        users = User.get_all_users()
+        if users:
+            print("Here's the full list of registered users:")
+            for user in users:
+                print(f"Name: {user.name} -- Library ID: {user.library_id}")
+        else:
+            print("No users registered. Please add users to the library")
+    except Exception as e:
+        print(f"Error Message: {e}. Users failed to load, please try again")
+
 
 # these are the author operations menu functions (add, view and display authors) 
 def add_author():
-    name = input("Enter author name: ").title()
-    bio = input("Enter author biography (brief description): ")
-    author = Author(name, bio)
-    authors.append(author)
-    print(f"'{name}' has been added to the authors list")
+    try:
+        name = input("Enter the author's name: ").title()
+        biography = input("Enter author biography: ")
+        author = Author(name = name, biography = biography)
+        author.save()
+        print(f"{name} added successfully")
+    except Exception as e:
+        print(f"Error Message: {e}. Failed to add author, please try again")
+
 
 def view_author():
-    name = input("Enter author name to view: ").title()
-    print("~ Search Result ~")
-    for author in authors:
-        if author.name == name:
-            print(author)
-            return
-    print(f"'{name}' was not found in the authors list. Please add the author")
+    try:
+        name = input("Enter the author's name: ").title()
+        author = Author.search_author_name(name)
+        if author:
+            print(f"Author found:\nName: {author.name} -- Biography: {author.biography}")
+        else:
+            print("Author not found")
+    except Exception as e:
+        print(f"Error Message: {e}. Failed to load authors, please try again")
 
 def display_authors():
-    if authors:
-        for author in authors:
-            print(author)
-    else:
-        print("Authors list empty, please add authors")
+    try:
+        authors = Author.get_all_authors()
+        if authors:
+            print("Here are the registered authors in the library")
+            for author in authors:
+                print(f"Name: {author.name} -- Biography: {author.biography}")
+        else:
+            print("No authors registered. Please add authors")
+    except Exception as e:
+        print(f"Error Message: {e}. Failed to display all authors, please try again")

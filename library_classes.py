@@ -50,7 +50,7 @@ class Book:
         if result:
             return Book(id = result[0], title = result[1], isbn = result[2], publication_date = result[3],
                 availability = result[4])
-        return "No books found in library"
+        return None
 
     def get_all_books(self):
         conn = connect_database()
@@ -103,7 +103,7 @@ class Book:
         # updating book availability to True
         cursor.execute("UPDATE books SET availability = %s WHERE id = %s",
             (True, self.id))
-            
+
         conn.commit()
         cursor.close()
         conn.close()
