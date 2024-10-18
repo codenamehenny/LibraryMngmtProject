@@ -9,7 +9,7 @@ class Book:
         self.id = id
         self.title = title
         self.author = author
-        self.isbn = isgn
+        self.isbn = isbn
         self.publication_date = publication_date
         self.availability = availability
 
@@ -18,20 +18,20 @@ class Book:
         cursor = conn.cursor()
         # checking to see if author exists and saving the author first if it doesn't
         if not self.author.id:
-            self.author.save()
+            self.author.save_author()
         if self.id:
             cursor.execute("""
                 UPDATE books SET title = %s, author_id = %s, isbn = %s, 
                 publication_date = %s, availability = %s WHERE id = %s
                 """, (self.title, self.author.id, self.isbn, self.publication_date, self.availability))
-                print(f"Details for {self.title} updated successfully")
+            print(f"Details for {self.title} updated successfully")
         else:
             cursor.execute("""
                 INSERT INTO books (title, author_id, isbn, publication_date, availability)
                 VALUES (%s, %s, %s, %s, %s)""",
                 (self.title, self.author_id, self.isbn, self.publication_date, self.availability))
-                self.id = cursor.lastrowid
-                print(f"{self.title} added to library successfully.")
+            self.id = cursor.lastrowid
+            print(f"{self.title} added to library successfully.")
         conn.commit()
         cursor.close()
         conn.close()
@@ -48,8 +48,7 @@ class Book:
         conn.close()
 
         if result:
-            return Book(id = result[0], title = result[1], isbn = result[2], publication_date = result[3],
-                availability = result[4])
+            return Book(id = result[0], title = result[1], isbn = result[2], publication_date = result[3], availability = result[4])
         return None
 
     def get_all_books(self):
@@ -60,19 +59,19 @@ class Book:
             SELECT b.id, b.title, a.id, a.biography, b.isbn, b.publication_date, b.availability
             FROM books b
             JOIN authors a ON b.author_id = a.id
-            """)
+        """)
         books = cursor.fetchall()
 
         cursor.close()
         conn.close()
         if books:
-        book_list = []
+            book_list = []
             for book in books:
                 author = Author(id = book[2], name = book[3], biography = book[4])
                 book_list.append(Book(id = book[0], title = book[1], author = author, isbn = book[5],
                     publication_date = book[6], availability = book[7]))
             return book_list
-        return "No books found in library"
+        return []
 
     def mark_as_borrowed(self, user_id):
         conn = connect_database()
@@ -83,9 +82,9 @@ class Book:
             VALUES (%s, %s, %s)""",
             (user_id, self.id, date.today()))
         # changing book availability status to False
-    cursor.execute("UPDATE books SET availability = %s WHERE id = %s",
-        (False, self.id))
-    print(f"{self.id} successfully marked borrowed by library id {user_id}")
+        cursor.execute("UPDATE books SET availability = %s WHERE id = %s",
+            (False, self.id))
+        print(f"{self.id} successfully marked borrowed by library id {user_id}")
 
         conn.commit()
         cursor.close()
@@ -191,6 +190,7 @@ class User:
                 borrowed_books.append(Book(id = book[0], title = book[1], author = author, isbn = book[5], 
                   publication_date = book[6], availability = False))
             return borrowed_books
+        return []
 
 class Author:
     # structures user input for author
@@ -224,7 +224,7 @@ class Author:
 
         if result:
             return Author(id = result[0], name = result[1], biography = result[2])
-        return f"{name} not found"
+        return None
 
     def get_all_authors(self):
         conn = connect_database()
@@ -239,7 +239,7 @@ class Author:
         if authors:
             return for author in authors:
                 Author(id = author[0], name = author[1], biography = author[2])
-        return "No authors found"
+        return None
 
     def __str__(self):
         return f"\nAuthor: {self.name} - Biography: {self.biography}"

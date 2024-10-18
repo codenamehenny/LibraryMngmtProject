@@ -10,10 +10,16 @@ def add_book():
         author_name = input("Enter author's name: ").title()
         isbn = input("Enter ISBN: ")
         publication_date = input("Enter publication date: ")
+        # searching or adding author
+        author = Author.search_author_name(author_name)
+        if not author:
+            author = Author(name = author_name)
+            author.save_author()
         # passing book details to Book class
-        book = Book(title, author, isbn, publication_date)  # passes through book info to the Book class in library_classes.py
-        books.save() # saves book details to database
-        except Exception as e:
+        book = Book(title = title, author = author, isbn = isbn, publication_date = publication_date)  # passes through book info to the Book class in library_classes.py
+        book.save_book() # saves book details to database
+        print(f"'{title}' has been added succesfully")
+    except Exception as e:
             print(f"Error message: {e}. Book details failed to save, please try again.")
 
 def borrow_book():
@@ -67,8 +73,8 @@ def display_books():
         if books:
             for book in books:
                 status = 'Available' if book.availability else 'Borrowed'
-                print(f"Title: {book.title}, Author: {book.author.name}, ISBN: {book.isbn}, 
-                    Publication Date: {book.publication_date}, Availability: {status}")
+                print(f"Title: {book.title}, Author: {book.author.name}, ISBN: {book.isbn}, " 
+                    f"Publication Date: {book.publication_date}, Availability: {status}")
         else:
             print("No books are registered in the library")
     except Exception as e:
